@@ -123,17 +123,11 @@ for i = 1:length(alphas(:,1))
     out_rcac(i) = sim('PPI_loops_rcac.slx',T);
     out_ddrcac(i) = sim('PPI_loops_ddrcac.slx',T);
     
-    rcac_pos_ppi.Nf_xy = 0.1*rcac_pos_ppi.Nf_xy ;
-    rcac_vel_ppi.Nf_xy = 0.1*rcac_vel_ppi.Nf_xy ;
-    rcac_pos_ppi.Nf_z = 0.1*rcac_pos_ppi.Nf_z ;
-    rcac_vel_ppi.Nf_z = 0.1*rcac_vel_ppi.Nf_z ;
+    rcac_pos_ppi.Nf_xy = -rcac_pos_ppi.Nf_xy ;
+    rcac_vel_ppi.Nf_xy = -rcac_vel_ppi.Nf_xy ;
+    % rcac_pos_ppi.Nf_z = 0.1*rcac_pos_ppi.Nf_z ;
+    % rcac_vel_ppi.Nf_z = 0.1*rcac_vel_ppi.Nf_z ;
     out_rcac2(i) = sim('PPI_loops_rcac.slx',T);
-
-    rcac_pos_ppi.Nf_xy = 10/0.1*rcac_pos_ppi.Nf_xy ;
-    rcac_vel_ppi.Nf_xy = 10/0.1*rcac_vel_ppi.Nf_xy ;
-    rcac_pos_ppi.Nf_z = 10/0.1*rcac_pos_ppi.Nf_z ;
-    rcac_vel_ppi.Nf_z = 10/0.1*rcac_vel_ppi.Nf_z ;
-    out_rcac3(i) = sim('PPI_loops_rcac.slx',T);
 
     if out_ppi(i).tout(end) == T
         pos_mse(i,1) = mean(vecnorm(out_ppi(i).err_pos,2,2));
@@ -158,13 +152,7 @@ for i = 1:length(alphas(:,1))
     else
         pos_mse(i,4) = 3.0;
     end
-
-    if out_rcac3(i).tout(end) == T
-        pos_mse(i,5) = mean(vecnorm(out_rcac3(i).err_pos,2,2));
-    else
-        pos_mse(i,5) = 3.0;
-    end
-        
+      
         
 end
 
@@ -175,51 +163,50 @@ ii = 1;
 
 %%
 close all;
-h=figure(1);
-set(0,'defaultAxesFontName', 'times',...
-    'defaultTextFontName','times',...
-    'DefaultAxesFontSize', 10, ...
-    'DefaultTextFontSize', 10, ...
-    'DefaultLineLineWidth',1,...
-    'DefaultLineMarkerSize', 1,...
-    'DefaultTextInterpreter','latex')
-h.Color='w';
-h.Units = 'inches';
-% h.Position=[.25 .25 3.85 6.3];
-% h.PaperPosition=[.25 .25 3.85 6.3];
-ha = tight_subplot(1,1,[.02 0.02],[.1 .05],[.1 .05]);
-fg=[0 102 51]/255;
-fr=[1 .2 .2];
-CO= [  1 .2 .2
-     0 .6 .3       
-    0    0.4470    0.7410
-    
-    0.9290    0.6940    0.1250
-    0.4940    0.1840    0.5560
-    0.4660    0.6740    0.1880
-    0.3010    0.7450    0.9330
-    0.6350    0.0780    0.1840];
-set(groot,'defaultAxesColorOrder',CO)
-
-axes(ha(1))
-ppp = plot3(out_ppi(ii).pos(:,1),out_ppi(ii).pos(:,2),out_ppi(ii).pos(:,3),...
-        out_ddrcac(ii).pos(:,1),out_ddrcac(ii).pos(:,2),out_ddrcac(ii).pos(:,3),...
-        out_rcac(ii).pos(:,1),out_rcac(ii).pos(:,2),out_rcac(ii).pos(:,3),...
-        out_rcac2(ii).pos(:,1),out_rcac2(ii).pos(:,2),out_rcac2(ii).pos(:,3), ...
-        out_rcac3(ii).pos(:,1),out_rcac3(ii).pos(:,2),out_rcac3(ii).pos(:,3));
-hold on
-p1 = plot3(out_ppi(ii).ref_pos(:,1),out_ppi(ii).ref_pos(:,2),out_ppi(ii).ref_pos(:,3),'k--');
-xlabel('$\bf x(m)$')
-ylabel('$\bf y(m)$')
-zlabel('$\bf z(m)$')
-xlim([-2 8])
-ylim([-8 2])
-
-h1 = legend([p1],'$Ref$','box','off');
-set(h1,'Interpreter','latex','location','northeast')
-a=axes('position',get(gca,'position'),'visible','off');
-h2 = legend(a,[ppp],'PPI','DDRCAC','RCAC, $G_{\rm f}=-{\beta}/{z}$','RCAC, $G_{\rm f}=-{0.1\beta}/{z}$','RCAC, $G_{\rm f}=-{10\beta}/{z}$');
-set(h2,'Interpreter','latex','location','south')
+% h=figure(1);
+% set(0,'defaultAxesFontName', 'times',...
+%     'defaultTextFontName','times',...
+%     'DefaultAxesFontSize', 10, ...
+%     'DefaultTextFontSize', 10, ...
+%     'DefaultLineLineWidth',1,...
+%     'DefaultLineMarkerSize', 1,...
+%     'DefaultTextInterpreter','latex')
+% h.Color='w';
+% h.Units = 'inches';
+% % h.Position=[.25 .25 3.85 6.3];
+% % h.PaperPosition=[.25 .25 3.85 6.3];
+% ha = tight_subplot(1,1,[.02 0.02],[.1 .05],[.1 .05]);
+% fg=[0 102 51]/255;
+% fr=[1 .2 .2];
+% CO= [  1 .2 .2
+%      0 .6 .3       
+%     0    0.4470    0.7410
+% 
+%     0.9290    0.6940    0.1250
+%     0.4940    0.1840    0.5560
+%     0.4660    0.6740    0.1880
+%     0.3010    0.7450    0.9330
+%     0.6350    0.0780    0.1840];
+% set(groot,'defaultAxesColorOrder',CO)
+% 
+% axes(ha(1))
+% ppp = plot3(out_ppi(ii).pos(:,1),out_ppi(ii).pos(:,2),out_ppi(ii).pos(:,3),...
+%         out_ddrcac(ii).pos(:,1),out_ddrcac(ii).pos(:,2),out_ddrcac(ii).pos(:,3),...
+%         out_rcac(ii).pos(:,1),out_rcac(ii).pos(:,2),out_rcac(ii).pos(:,3),...
+%         out_rcac2(ii).pos(:,1),out_rcac2(ii).pos(:,2),out_rcac2(ii).pos(:,3));
+% hold on
+% p1 = plot3(out_ppi(ii).ref_pos(:,1),out_ppi(ii).ref_pos(:,2),out_ppi(ii).ref_pos(:,3),'k--');
+% xlabel('$\bf x(m)$')
+% ylabel('$\bf y(m)$')
+% zlabel('$\bf z(m)$')
+% xlim([-2 8])
+% ylim([-8 2])
+% 
+% h1 = legend([p1],'$Ref$','box','off');
+% set(h1,'Interpreter','latex','location','northeast')
+% a=axes('position',get(gca,'position'),'visible','off');
+% h2 = legend(a,[ppp],'PPI','DDRCAC','RCAC, $G_{\rm f}=-{\beta}/{z}$','RCAC, $G_{\rm f}={\beta}/{z}$');
+% set(h2,'Interpreter','latex','location','south')
 
 
 h=figure(2);
@@ -251,8 +238,7 @@ axes(ha(1))
 ppp = plot(out_ppi(ii).pos(:,1),out_ppi(ii).pos(:,2),...
         out_ddrcac(ii).pos(:,1),out_ddrcac(ii).pos(:,2),...
         out_rcac(ii).pos(:,1),out_rcac(ii).pos(:,2),...
-        out_rcac2(ii).pos(:,1),out_rcac2(ii).pos(:,2), ...
-        out_rcac3(ii).pos(:,1),out_rcac3(ii).pos(:,2));
+        out_rcac2(ii).pos(:,1),out_rcac2(ii).pos(:,2));
 hold on
 p1 = plot(out_ppi(ii).ref_pos(:,1),out_ppi(ii).ref_pos(:,2),'k--');
 xlabel('$\bf x(m)$')
@@ -263,7 +249,7 @@ ylim([-8 2])
 h1 = legend([p1],'$Ref$','box','off');
 set(h1,'Interpreter','latex','location','northwest')
 a=axes('position',get(gca,'position'),'visible','off');
-h2 = legend(a,[ppp],'PPI','DDRCAC','RCAC, $G_{\rm f}=-{\beta}/{z}$','RCAC, $G_{\rm f}=-{0.1\beta}/{z}$','RCAC, $G_{\rm f}=-{10\beta}/{z}$');
+h2 = legend(a,[ppp],'PPI','DDRCAC','RCAC, $G_{\rm f}=-{\beta}/{z}$','RCAC, $G_{\rm f}={\beta}/{z}$');
 set(h2,'Interpreter','latex','location','southwest')
 
 h=figure(3);
@@ -295,8 +281,7 @@ for kk =1:3
     ppp = plot(out_ppi(ii).tout,out_ppi(ii).pos(:,kk),...
             out_ddrcac(ii).tout,out_ddrcac(ii).pos(:,kk),...
             out_rcac(ii).tout,out_rcac(ii).pos(:,kk),...
-            out_rcac2(ii).tout,out_rcac2(ii).pos(:,kk),...
-             out_rcac3(ii).tout,out_rcac3(ii).pos(:,kk));
+            out_rcac2(ii).tout,out_rcac2(ii).pos(:,kk));
     hold on
     p1 = plot(out_ppi(ii).tout,out_ppi(ii).ref_pos(:,kk),'k--');
     xlim([0 70])
@@ -316,7 +301,7 @@ for kk =1:3
         ylim([-2 6])
     end
 end
-
+%%
 h = figure(4);
 set(0,'defaultAxesFontName', 'times',...
     'defaultTextFontName','times',...
@@ -344,10 +329,10 @@ set(groot,'defaultAxesColorOrder',CO)
 axes(ha(1))
 b=bar(pos_mse(ii,:));
 b.FaceColor = 'flat';
-for jj = 2:5
+for jj = 2:4
     b.CData(jj,:) = CO(jj,:);
 end
-set(gca,'XTickLabel',{'\bf{PPI}','\bf{DDRCAC}','\bf{RCAC, $G_{\rm f}=-{\beta}/{z}$}','\bf{RCAC, $G_{\rm f}=-{0.1\beta}/{z}$}','\bf{RCAC, $G_{\rm f}=-{10\beta}/{z}$}'},'TickLabelInterpreter','latex');
+set(gca,'XTickLabel',{'\bf{PPI}','\bf{DDRCAC}','\bf{RCAC, $G_{\rm f}=-{\beta}/{z}$}','\bf{RCAC, $G_{\rm f}={\beta}/{z}$}'},'TickLabelInterpreter','latex');
 ylabel('$Pos M.S.E(m)$')
 
 %% 

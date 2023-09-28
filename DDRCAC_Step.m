@@ -2,13 +2,13 @@ function [u_out, theta_out, P_out,...
    theta_id_out, P_id_out,...
    u_buffer_out, y_buffer_out,...
    innov_id_buffer_out, Phibar_out, ubar_out] = DDRCAC_Step(kk, u_in, y_in, z_in, Phi_in,...
-                                    P0_val, Rz, Ru,...
+                                    P0_val, Rz, Ru, Nf,...
                                     P0_id, N_id, tau_1_id, tau_2_id, eta_id,...
                                     P, theta, Phibar, ubar,...
                                     P_id, theta_id,...
                                     u_buffer, y_buffer, innov_id_buffer)
 %% Constants
-nu = 50;
+nu = 1;
 Rblock = blkdiag(Rz, Ru);
 
 %% Normalize z
@@ -59,8 +59,9 @@ if (kk>1)
     % Construct Gf
     indexvec = N_id + 1;
     filt_Nf = reshape(-theta_id(indexvec:end), 1, (N_id+1));
-    if norm(filt_Nf) == 0
-        filt_Nf(:,1) = -ones(1,1);
+    if norm(filt_Nf) == 0 
+        filt_Nf(:,1:1) = -ones(1,1);
+        disp("Nf set to -1!")
     end
 
     %% RCAC stuffs
@@ -70,13 +71,29 @@ if (kk>1)
 
     % Build Phiblock
     X = [Phi_filt; Phi_in];
- 
+
     % Compute theta
     gamma = inv(Rblock) + X*P*X';
     P = P - P*X'/gamma*X*P;
     Y = [(Phi_filt*theta + z_in - u_filt); (Phi_in*theta)];
-    theta = theta - P*X'*Rblock*Y ;
+    theta = theta - P*X'*Rblock*Y;
     % theta = theta - P*Phi_filt'*(z_filt - u_filt + Phi_filt*theta) - P*Phi_in'*Rblock(2,2)*Phi_in*theta;
+
+
+    % ubar = [u_in; ubar(1)];
+    % Phibar = [Phi_in; Phibar(1:2,:)];
+    % z_filt = z_in;
+    % temp = filtNu * ubar;
+    % u_filt = temp(1,1);
+    % Phi_filt = filtNu * Phibar(2:3,:);
+    % 
+    % % Build Phiblock
+    % X = [Phi_filt; Phi_k];
+    % 
+    % % Compute theta
+    % gamma = inv(Rblock) + X*P*X';
+    % P = P - P*X'/gamma*X*P;
+    % theta = theta - P*Phi_filt'*(z_filt - u_filt + Phi_filt*theta) - P*Phi_k'*Rblock(2,2)*Phi_k*theta;
 
 else
     P = eye(size(P,1))*P0_val;
